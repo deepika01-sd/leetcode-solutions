@@ -1,0 +1,79 @@
+class Solution:
+    
+    def isInteger(self, s, start, end):
+        if start > end:
+            return False
+        
+        if s[start] == '+' or s[start] == '-':
+            start += 1
+        
+        if start > end:
+            return False
+        
+        i = start
+        while i <= end:
+            if not ('0' <= s[i] <= '9'):
+                return False
+            i += 1
+        
+        return True
+    
+    
+    def isDecimal(self, s, start, end):
+        if start > end:
+            return False
+        
+        if s[start] == '+' or s[start] == '-':
+            start += 1
+        
+        dot_seen = False
+        digit_seen = False
+        
+        i = start
+        while i <= end:
+            ch = s[i]
+            
+            if '0' <= ch <= '9':
+                digit_seen = True
+            
+            elif ch == '.':
+                if dot_seen:
+                    return False
+                dot_seen = True
+            
+            else:
+                return False
+            
+            i += 1
+        
+        return digit_seen
+    
+    
+    def isNumber(self, s: str) -> bool:
+        left = 0
+        while left < len(s) and s[left] == ' ':
+            left += 1
+        
+        right = len(s) - 1
+        while right >= 0 and s[right] == ' ':
+            right -= 1
+        
+        if left > right:
+            return False
+        
+        e_pos = -1
+        i = left
+        while i <= right:
+            if s[i] == 'e' or s[i] == 'E':
+                if e_pos != -1:
+                    return False
+                e_pos = i
+            i += 1
+        
+        if e_pos == -1:
+            return self.isDecimal(s, left, right)
+        
+        left_part = self.isDecimal(s, left, e_pos - 1)
+        right_part = self.isInteger(s, e_pos + 1, right)
+        
+        return left_part and right_part
