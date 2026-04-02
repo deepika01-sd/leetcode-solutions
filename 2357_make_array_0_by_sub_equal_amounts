@@ -1,0 +1,15 @@
+class Solution:
+    def minimumOperations(self, nums: List[int]) -> int:
+        unique = []
+
+        for num in nums:
+            if num != 0:
+                if num not in unique:
+                    unique.append(num)
+            
+        count = 0
+        for i in unique:
+            count += 1
+
+        return count
+       
