@@ -1,0 +1,24 @@
+class Solution:
+    def combinationSum(self, candidates, target):
+        result = []
+
+        def backtrack(start, path, target):
+            # base case
+            if target == 0:
+                result.append(path[:])
+                return
+            
+            if target < 0:
+                return
+
+            # choices
+            for i in range(start, len(candidates)):
+                path.append(candidates[i])  # pick
+
+                # same i (reuse allowed)
+                backtrack(i, path, target - candidates[i])
+
+                path.pop()  # undo
+
+        backtrack(0, [], target)
+        return result
