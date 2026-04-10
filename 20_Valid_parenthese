@@ -1,0 +1,25 @@
+class Solution:
+    def isValid(self, s: str) -> bool:
+        stack = []
+
+        for ch in s:
+            # opening brackets
+            if ch == '(' or ch == '{' or ch == '[':
+                stack.append(ch)
+            else:
+                # agar stack empty hai
+                if len(stack) == 0:
+                    return False
+
+                top = stack.pop()
+
+                # matching check
+                if ch == ')' and top != '(':
+                    return False
+                if ch == '}' and top != '{':
+                    return False
+                if ch == ']' and top != '[':
+                    return False
+
+        # last me stack empty hona chahiye
+        return len(stack) == 0
