@@ -1,0 +1,65 @@
+from typing import List
+
+class Solution:
+    def maximumScore(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        m = n + 1
+        NEG = -10**30
+
+        # prefix sum for each column
+        pref = []
+        for col in range(n):
+            p = [0] * m
+            for row in range(n):
+                p[row + 1] = p[row] + grid[row][col]
+            pref.append(p)
+
+        # dp[prev_height][curr_height]
+        dp = [[NEG] * m for _ in range(m)]
+
+        # left boundary height = 0
+        for h in range(m):
+            dp[0][h] = 0
+
+        for col in range(n):
+            p = pref[col]
+            ndp = [[NEG] * m for _ in range(m)]
+
+            # last column ke baad right boundary height = 0
+            next_heights = range(1) if col == n - 1 else range(m)
+
+            for curr in range(m):
+                values = [dp[prev][curr] for prev in range(m)]
+
+                if max(values) == NEG:
+                    continue
+
+                # prefix max of dp[prev][curr]
+                pre = [NEG] * m
+                best = NEG
+                for prev in range(m):
+                    best = max(best, values[prev])
+                    pre[prev] = best
+
+                # suffix max of dp[prev][curr] + prefix sum
+                suf = [NEG] * (m + 1)
+                best = NEG
+                for prev in range(m - 1, -1, -1):
+                    best = max(best, values[prev] + p[prev])
+                    suf[prev] = best
+
+                for nxt in next_heights:
+                    if nxt <= curr:
+                        best_score = pre[curr]
+                        if curr + 1 < m:
+                            best_score = max(best_score, suf[curr + 1] - p[curr])
+                    else:
+                        best_score = pre[nxt] + p[nxt] - p[curr]
+                        if nxt + 1 < m:
+                            best_score = max(best_score, suf[nxt + 1] - p[curr])
+
+                    ndp[curr][nxt] = best_score
+
+            dp = ndp
+
+        return max(max(row) for row in dp)
